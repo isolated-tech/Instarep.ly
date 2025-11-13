@@ -11,16 +11,35 @@ export default function WaitlistPage() {
   const [email, setEmail] = useState("")
   const [isSubmitted, setIsSubmitted] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
+  const [error, setError] = useState("")
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setIsLoading(true)
+    setError("")
 
-    // Simulate API call
-    await new Promise((resolve) => setTimeout(resolve, 1000))
+    try {
+      const response = await fetch("/api/subscribe", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ email }),
+      })
 
-    setIsLoading(false)
-    setIsSubmitted(true)
+      const data = await response.json()
+
+      if (!response.ok) {
+        throw new Error(data.error || "Failed to subscribe")
+      }
+
+      setIsSubmitted(true)
+      setEmail("")
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Something went wrong. Please try again.")
+    } finally {
+      setIsLoading(false)
+    }
   }
 
   return (
@@ -61,19 +80,26 @@ export default function WaitlistPage() {
           {/* Waitlist form or success state */}
           <div className="pt-4">
             {!isSubmitted ? (
-              <form onSubmit={handleSubmit} className="flex flex-col sm:flex-row gap-3 max-w-[480px] mx-auto">
-                <Input
-                  type="email"
-                  placeholder="Enter your email address"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  required
-                  className="h-12 px-5 bg-muted/50 border-border text-base flex-1"
-                />
-                <Button type="submit" size="lg" disabled={isLoading} className="h-12 px-8 font-medium">
-                  {isLoading ? "Joining..." : "Join Waitlist"}
-                </Button>
-              </form>
+              <div className="max-w-[480px] mx-auto space-y-3">
+                <form onSubmit={handleSubmit} className="flex flex-col sm:flex-row gap-3">
+                  <Input
+                    type="email"
+                    placeholder="Enter your email address"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    required
+                    className="h-12 px-5 bg-muted/50 border-border text-base flex-1"
+                  />
+                  <Button type="submit" size="lg" disabled={isLoading} className="h-12 px-8 font-medium">
+                    {isLoading ? "Joining..." : "Join Waitlist"}
+                  </Button>
+                </form>
+                {error && (
+                  <p className="text-sm text-red-600 dark:text-red-500 text-center animate-in fade-in duration-300">
+                    {error}
+                  </p>
+                )}
+              </div>
             ) : (
               <div className="flex items-center justify-center gap-3 text-lg animate-in fade-in duration-500">
                 <CheckCircle2 className="w-6 h-6 text-green-600 dark:text-green-500" />
