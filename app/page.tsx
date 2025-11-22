@@ -115,6 +115,10 @@ export default function WaitlistPage() {
         {/* Footer */}
         <footer className="absolute bottom-8 left-0 right-0 text-center">
           <div className="flex items-center justify-center gap-6 text-sm text-muted-foreground">
+            <a href="/demo" className="hover:text-foreground transition-colors">
+              Try Demo
+            </a>
+            <span className="w-1 h-1 rounded-full bg-muted-foreground/30" />
             <a href="#" className="hover:text-foreground transition-colors">
               Privacy Policy
             </a>

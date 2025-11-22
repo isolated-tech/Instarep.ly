@@ -4,6 +4,7 @@ import { Geist, Poppins } from "next/font/google"
 import { Analytics } from "@vercel/analytics/next"
 import { ThemeProvider } from "@/components/theme-provider"
 import { ThemeToggle } from "@/components/theme-toggle"
+import { ProfileProvider } from "@/contexts/ProfileContext"
 import "./globals.css"
 
 const geist = Geist({ subsets: ["latin"] })
@@ -46,11 +47,13 @@ export default function RootLayout({
     <html lang="en" suppressHydrationWarning>
       <body className={`${geist.className} ${poppins.variable} font-sans antialiased`}>
         <ThemeProvider attribute="class" defaultTheme="system" enableSystem disableTransitionOnChange={false}>
-          <div className="fixed bottom-6 right-6 z-50">
-            <ThemeToggle />
-          </div>
-          {children}
-          <Analytics />
+          <ProfileProvider>
+            <div className="fixed bottom-6 right-6 z-50">
+              <ThemeToggle />
+            </div>
+            {children}
+            <Analytics />
+          </ProfileProvider>
         </ThemeProvider>
       </body>
     </html>
